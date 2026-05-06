@@ -1,23 +1,41 @@
 pipeline {
     agent any
+
     stages {
         stage('Source') {
             steps {
-                echo 'Pulling code from GitHub...'
+                echo 'Step 1: Pulling code from GitHub...'
                 checkout scm
             }
         }
-        stage('Provision') {
+
+        stage('Provision Environment') {
             steps {
-                echo 'Running Ansible Playbook...'
-                // This is where your Ansible command will go later
+                echo 'Step 2: Running Ansible Playbook to prepare servers...'
+                // After you create setup-server.yml, uncomment the line below:
+                // sh "ansible-playbook -i hosts.ini setup-server.yml"
             }
         }
-        stage('Build & Deploy') {
+
+        stage('Build & Containerize') {
             steps {
-                echo 'Building Docker Image...'
-                // This is where your Docker commands will go later
+                echo 'Step 3: Building Docker Image...'
+                script {
+                    // This uses the Dockerfile you just created
+                    sh "docker build -t applebite-app ."
+                }
+            }
+        }
+
+        stage('Deploy to Test') {
+            steps {
+                echo 'Step 4: Deploying to Test Server...'
+                script {
+                    // This stops any old container and starts the new one
+                    sh "docker rm -f applebite-test || true"
+                    sh "docker run -d --name applebite-test -p 8081:80 applebite-app"
+                }
             }
         }
     }
-}  
+}
