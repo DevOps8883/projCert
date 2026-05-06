@@ -54,7 +54,7 @@ pipeline {
                 echo 'Step 5: Deploying to Production Server...'
                 // Using withCredentials since sshagent plugin is missing
                 withCredentials([sshUserPrivateKey(credentialsId: 'test-server-key', keyFileVariable: 'SSH_KEY')]) {
-                    sh "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ubuntu@172.31.41.200 'docker rm -f applebite-prod || true && docker run -d --name applebite-prod -p 80:80 applebite-app'"
+                    sh "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ubuntu@172.31.41.200 'sudo docker rm -f applebite-prod || true && sudo docker run -d --name applebite-prod -p 80:80 applebite-app'"
                 }
             }
         }  
