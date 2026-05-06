@@ -12,13 +12,12 @@ pipeline {
         stage('Provision Environment') {
             steps {
                 echo 'Step 2: Running Ansible Playbook...'
-                // Corrected: Added missing closing parenthesis/brace for the step
                 ansiblePlaybook(
-                    ansibleName: 'ansible-local', 
+                    installation: 'ansible-local', 
                     playbook: 'setup-server.yml',
                     inventory: 'hosts.ini',
                     credentialsId: 'test-server-key',
-                     disableHostKeyChecking: true
+                    disableHostKeyChecking: true
                 )
             }
         }
@@ -44,12 +43,13 @@ pipeline {
         
         stage('Deploy to Production') {
             steps {
-                // The 'One-Click' requirement
                 input message: 'Promote to Production?', ok: 'Deploy Now'
                 
-                echo 'Deploying to Production Server...'
-                // Ensure the 'applebite-app' image exists on the prod server or is pulled from a registry
-                sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.41.200 'docker rm -f applebite-prod || true && docker run -d --name applebite-prod -p 80:80 applebite-app'"
+                echo 'Step 5: Deploying to Production Server...'
+                // sshagent provides the 'test-server-key' to the sh command below
+                sshagent(credentials: ['test-server-key']) {
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.41.200 'docker rm -f applebite-prod || true && docker run -d --name applebite-prod -p 80:80 applebite-app'"
+                }
             }
         }  
     }
