@@ -11,11 +11,16 @@ pipeline {
 
         stage('Provision Environment') {
             steps {
-                echo 'Step 2: Running Ansible Playbook to prepare servers...'
-                // After you create setup-server.yml, uncomment the line below:
-                sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini setup-server.yml"
-            }
-        }
+               echo 'Step 2: Running Ansible Playbook...'
+               // This helper (ansiblePlaybook) handles the SSH keys for you
+               ansiblePlaybook(
+                   ansibleName: 'ansible-local', // Ensure this matches your Tool Name in Jenkins
+                   playbook: 'setup-server.yml',
+                   inventory: 'hosts.ini',
+                   credentialsId: 'test-server-key' // The ID we created in Step 2
+        )
+    }
+}
 
         stage('Build & Containerize') {
             steps {
