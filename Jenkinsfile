@@ -18,6 +18,7 @@ pipeline {
                     playbook: 'setup-server.yml',
                     inventory: 'hosts.ini',
                     credentialsId: 'test-server-key'
+                     disableHostKeyChecking: true
                 )
             }
         }
