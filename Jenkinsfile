@@ -13,7 +13,7 @@ pipeline {
             steps {
                 echo 'Step 2: Running Ansible Playbook to prepare servers...'
                 // After you create setup-server.yml, uncomment the line below:
-                 sh "ansible-playbook -i hosts.ini setup-server.yml"
+                sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini setup-server.yml"
             }
         }
 
