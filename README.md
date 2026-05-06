@@ -44,3 +44,12 @@ During development, the following infrastructure hurdles were overcome:
 ---
 **Developed by:** DevOps8883
 **Project Status:** Successfully Completed / Deployment Active
+
+<img width="935" height="407" alt="ab" src="https://github.com/user-attachments/assets/af1b96d2-7931-4368-a671-179fa8e916f0" />
+
+<img width="923" height="406" alt="ac" src="https://github.com/user-attachments/assets/1b1cf4ef-d1ea-4b06-8a33-6bfce7db6859" />
+
+<img width="938" height="473" alt="ad" src="https://github.com/user-attachments/assets/8cc8d1bb-d9f0-4ff8-896a-bb82a9bb4f45" />
+
+
+
