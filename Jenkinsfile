@@ -43,12 +43,13 @@ pipeline {
         
         stage('Deploy to Production') {
             steps {
+                // The 'One-Click' requirement
                 input message: 'Promote to Production?', ok: 'Deploy Now'
                 
                 echo 'Step 5: Deploying to Production Server...'
-                // sshagent provides the 'test-server-key' to the sh command below
-                sshagent(credentials: ['test-server-key']) {
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.41.200 'docker rm -f applebite-prod || true && docker run -d --name applebite-prod -p 80:80 applebite-app'"
+                // Using withCredentials since sshagent plugin is missing
+                withCredentials([sshUserPrivateKey(credentialsId: 'test-server-key', keyFileVariable: 'SSH_KEY')]) {
+                    sh "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ubuntu@172.31.41.200 'docker rm -f applebite-prod || true && docker run -d --name applebite-prod -p 80:80 applebite-app'"
                 }
             }
         }  
