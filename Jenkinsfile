@@ -1,6 +1,11 @@
 pipeline {
     agent any 
 
+    options {
+        // This prevents the build from disappearing by forcing Jenkins to keep the last 10 records
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
     stages {
         stage('Source') {
             steps {
