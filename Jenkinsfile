@@ -60,7 +60,7 @@ pipeline {
                         
                         // 3. Load image on Prod server, clean up old container, and start new one
                         sh '''
-                            ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ubuntu@172.31.41.200 "
+                            ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ubuntu@ 34.242.223.225 "
                                 sudo docker load < /tmp/applebite-app.tar && \
                                 sudo docker rm -f applebite-prod || true && \
                                 sudo docker run -d --name applebite-prod -p 80:80 applebite-app
