@@ -10,6 +10,13 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html
 
+# This creates a config file that overrides the default "Deny all" behavior
+RUN echo '<Directory "/var/www/html">\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' > /etc/apache2/conf-available/allow-access.conf \
+    && a2enconf allow-access    
+
 # Step 3: Tell Docker to listen on port 80 (standard web port)
 EXPOSE 80
 
