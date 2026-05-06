@@ -11,22 +11,21 @@ pipeline {
 
         stage('Provision Environment') {
             steps {
-               echo 'Step 2: Running Ansible Playbook...'
-               // This helper (ansiblePlaybook) handles the SSH keys for you
-               ansiblePlaybook(
-                   ansibleName: 'ansible-local', // Ensure this matches your Tool Name in Jenkins
-                   playbook: 'setup-server.yml',
-                   inventory: 'hosts.ini',
-                   credentialsId: 'test-server-key' // The ID we created in Step 2
-        )
-    }
-}
+                echo 'Step 2: Running Ansible Playbook...'
+                // Corrected: Added missing closing parenthesis/brace for the step
+                ansiblePlaybook(
+                    ansibleName: 'ansible-local', 
+                    playbook: 'setup-server.yml',
+                    inventory: 'hosts.ini',
+                    credentialsId: 'test-server-key'
+                )
+            }
+        }
 
         stage('Build & Containerize') {
             steps {
                 echo 'Step 3: Building Docker Image...'
                 script {
-                    // This uses the Dockerfile you just created
                     sh "docker build -t applebite-app ."
                 }
             }
@@ -36,11 +35,21 @@ pipeline {
             steps {
                 echo 'Step 4: Deploying to Test Server...'
                 script {
-                    // This stops any old container and starts the new one
                     sh "docker rm -f applebite-test || true"
                     sh "docker run -d --name applebite-test -p 8081:80 applebite-app"
                 }
             }
         }
+        
+        stage('Deploy to Production') {
+            steps {
+                // The 'One-Click' requirement
+                input message: 'Promote to Production?', ok: 'Deploy Now'
+                
+                echo 'Deploying to Production Server...'
+                // Ensure the 'applebite-app' image exists on the prod server or is pulled from a registry
+                sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.41.200 'docker rm -f applebite-prod || true && docker run -d --name applebite-prod -p 80:80 applebite-app'"
+            }
+        }  
     }
 }
