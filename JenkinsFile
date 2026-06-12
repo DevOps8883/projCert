@@ -30,6 +30,7 @@ pipeline {
                 echo 'Step 3: Deploying to Docker Desktop Kubernetes...'
                 script {
                     // Jenkins uses the local kubectl context to apply the deployment
+                    sh 'kubectl config use-context docker-desktop'
                     sh 'kubectl apply -f deployment.yml'
                     
                     // Force Kubernetes to restart the pods to pull the newly built local image
