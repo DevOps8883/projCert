@@ -1,0 +1,41 @@
+pipeline {
+    agent any 
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    stages {
+        stage('Source') {
+            steps {
+                echo 'Step 1: Pulling code from GitHub...'
+                checkout scm
+            }
+        }
+
+        // REMOVED: Ansible stage is no longer needed since Kubernetes manages the environment
+
+        stage('Build & Containerize') {
+            steps {
+                echo 'Step 2: Building Docker Image...'
+                script {
+                    // Docker Desktop shares its image registry with its local Kubernetes cluster
+                    sh 'docker build -t applebite-app:latest .'
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                echo 'Step 3: Deploying to Docker Desktop Kubernetes...'
+                script {
+                    // Jenkins uses the local kubectl context to apply the deployment
+                    sh 'kubectl apply -f deployment.yml'
+                    
+                    // Force Kubernetes to restart the pods to pull the newly built local image
+                    sh 'kubectl rollout restart deployment applebite-deployment'
+                }
+            }
+        }
+    }
+}
