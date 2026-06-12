@@ -31,6 +31,7 @@ pipeline {
                 script {
                     // Jenkins uses the local kubectl context to apply the deployment
                     sh 'kubectl config use-context docker-desktop'
+                    sh 'rm -rf ~/.kube/cache' // clear out the jenkins cache
                     sh 'kubectl apply -f deployment.yaml --validate=false' 
                     
                     // Force Kubernetes to restart the pods to pull the newly built local image
