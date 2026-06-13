@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: applebite-container
-        image: applebite-app:latest
+        image: davidadeleke23/applebite-app:latest
         imagePullPolicy: Always # Crucial: Tells Kubernetes to use the image you just built locally
         ports:
         - containerPort: 80
